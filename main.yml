@@ -1,0 +1,36 @@
+name: Build EXE
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Kodu indir
+        uses: actions/checkout@v4
+
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Bagimliliklar kur
+        run: pip install reportlab pyinstaller
+        env:
+          PYTHONUTF8: "1"
+
+      - name: EXE olustur
+        run: pyinstaller --onefile --windowed --name "FMT_YerdenIsitma" fmt_yerden_isitma.py
+        env:
+          PYTHONUTF8: "1"
+
+      - name: EXE yukle
+        uses: actions/upload-artifact@v4
+        with:
+          name: FMT_YerdenIsitma_Windows
+          path: dist/FMT_YerdenIsitma.exe
+          retention-days: 30
